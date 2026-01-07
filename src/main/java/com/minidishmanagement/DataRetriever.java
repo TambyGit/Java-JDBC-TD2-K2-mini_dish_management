@@ -47,5 +47,37 @@ public class DataRetriever {
         return ingredients;
     }
 
-
+    public List<Ingredient> createIngredients(List<Ingredient> newIngredients) {
+        String checkSql = "SELECT COUNT(*) FROM ingredient WHERE name = ?";
+        String insertSql = "INSERT INTO ingredient (name, price, category, id_dish) VALUES (?, ?, ?, ?) RETURNING id";
+        List<Ingredient> created = new ArrayList<>();
+        try (Connection conn = dbConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            for (Ingredient ing : newIngredients) {
+                try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                    checkStmt.setString(1, ing.getName());
+                    ResultSet rs = checkStmt.executeQuery();
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        conn.rollback();
+                        throw new RuntimeException("Ingrédient déjà existant: " + ing.getName());
+                    }
+                }
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                    insertStmt.setString(1, ing.getName());
+                    insertStmt.setDouble(2, ing.getPrice());
+                    insertStmt.setString(3, ing.getCategory().name());
+                    insertStmt.setInt(4, ing.getDish() != null ? ing.getDish().getId() : null);
+                    ResultSet rs = insertStmt.executeQuery();
+                    if (rs.next()) {
+                        int id = rs.getInt(1);
+                        created.add(new Ingredient(id, ing.getName(), ing.getPrice(), ing.getCategory(), ing.getDish()));
+                    }
+                }
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return created;
+    }
 }
