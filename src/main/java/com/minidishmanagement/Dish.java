@@ -31,12 +31,11 @@ public class Dish {
         return ingredients;
     }
 
-    public Double getDishPrice() {
+    public double getDishCost() {
         return ingredients.stream()
                 .mapToDouble(Ingredient::getPrice)
                 .sum();
     }
-
 
     @Override
     public String toString() {
