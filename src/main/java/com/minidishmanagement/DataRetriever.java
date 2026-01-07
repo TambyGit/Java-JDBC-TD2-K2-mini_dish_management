@@ -19,8 +19,33 @@ public class DataRetriever {
                 DishTypeEnum type = DishTypeEnum.valueOf(rs.getString("dish_type"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
+
+    public List<Ingredient> findIngredients(int page, int size) {
+        String sql = "SELECT id, name, price, category, id_dish FROM ingredient ORDER BY id LIMIT ? OFFSET ?";
+        List<Ingredient> ingredients = new ArrayList<>();
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, size);
+            stmt.setInt(2, (page - 1) * size);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                double price = rs.getDouble("price");
+                CategorieEnum category = CategorieEnum.valueOf(rs.getString("category"));
+                int dishId = rs.getInt("id_dish");
+                Dish dish = findDishById(dishId);
+                ingredients.add(new Ingredient(id, name, price, category, dish));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return ingredients;
+    }
+
+
 }
