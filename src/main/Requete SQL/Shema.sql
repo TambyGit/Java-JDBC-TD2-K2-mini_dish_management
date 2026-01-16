@@ -17,3 +17,11 @@ CREATE TABLE ingredient (
     CONSTRAINT fk_dish FOREIGN KEY (id_dish)
     REFERENCES dish(id)ON DELETE SET NULL
 );
+
+ALTER TABLE dish ADD COLUMN IF NOT EXISTS price NUMERIC;
+
+UPDATE dish SET price = 2000.00 WHERE name = 'Salade fraîche';
+UPDATE dish SET price = 6000.00 WHERE name = 'Poulet grillé';
+UPDATE dish SET price = NULL    WHERE name = 'Riz aux légumes';
+UPDATE dish SET price = NULL    WHERE name = 'Gâteau au chocolat';
+UPDATE dish SET price = NULL    WHERE name = 'Salade de fruits';

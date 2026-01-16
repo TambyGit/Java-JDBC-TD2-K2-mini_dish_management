@@ -36,7 +36,7 @@ public class Ingredient {
     }
 
     public String getDishName() {
-        return dish.getName();
+        return dish != null ? dish.getName() : "Aucun plat associé";
     }
 
     @Override
