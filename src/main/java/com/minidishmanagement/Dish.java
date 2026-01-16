@@ -50,7 +50,7 @@ public class Dish {
 
     public double getGrossMargin() {
         if (price == null) {
-            throw new IllegalStateException("Impossible de calculer la marge brute : le prix de vente n'a pas été défini.");
+            throw new RuntimeException("Impossible de calculer la marge brute : le prix de vente n'a pas été défini.");
         }
         return price - getDishCost();
     }
