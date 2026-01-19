@@ -227,5 +227,45 @@ public class Main {
             System.out.println("Exception: " + e.getMessage());
         }
         System.out.println();
+
+        System.out.println("**** TESTS DishIngredient ****\n");
+
+        System.out.println("1) findDishIngredientById(1) :");
+        try {
+            DishIngredient di = dataRetriever.findDishIngredientById(1);
+            System.out.println(di);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+        System.out.println();
+
+        System.out.println("2) findDishIngredientsByDishId(1) :");
+        try {
+            List<DishIngredient> list = dataRetriever.findDishIngredientsByDishId(1);
+            list.forEach(System.out::println);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+        System.out.println();
+
+        System.out.println("3) saveDishIngredient (insertion) :");
+        try {
+            DishIngredient newDI = new DishIngredient(0, 1, 2, 0.5, UnitTypeEnum.KG);
+            DishIngredient saved = dataRetriever.saveDishIngredient(newDI);
+            System.out.println("DishIngredient inséré: " + saved);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+        System.out.println();
+
+        System.out.println("4) saveDishIngredient (update) :");
+        try {
+            DishIngredient toUpdate = new DishIngredient(1, 1, 2, 0.75, UnitTypeEnum.KG);
+            DishIngredient updated = dataRetriever.saveDishIngredient(toUpdate);
+            System.out.println("DishIngredient mis à jour: " + updated);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+        System.out.println();
     }
 }

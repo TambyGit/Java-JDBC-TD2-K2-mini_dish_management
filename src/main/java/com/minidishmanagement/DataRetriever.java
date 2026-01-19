@@ -359,4 +359,90 @@ public class DataRetriever {
         }
         return ingredients;
     }
+
+    public DishIngredient findDishIngredientById(int id) {
+        String sql = "SELECT id, id_dish, id_ingredient, quantity_required, unit_type FROM dish_ingredient WHERE id = ?";
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new DishIngredient(
+                        rs.getInt("id"),
+                        rs.getInt("id_dish"),
+                        rs.getInt("id_ingredient"),
+                        rs.getDouble("quantity_required"),
+                        UnitTypeEnum.valueOf(rs.getString("unit_type"))
+                );
+            } else {
+                throw new RuntimeException("DishIngredient avec l'ID " + id + " non trouvé");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération du DishIngredient : " + e.getMessage(), e);
+        }
+    }
+
+    public List<DishIngredient> findDishIngredientsByDishId(int dishId) {
+        String sql = "SELECT id, id_dish, id_ingredient, quantity_required, unit_type FROM dish_ingredient WHERE id_dish = ?";
+        List<DishIngredient> list = new ArrayList<>();
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, dishId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                list.add(new DishIngredient(
+                        rs.getInt("id"),
+                        rs.getInt("id_dish"),
+                        rs.getInt("id_ingredient"),
+                        rs.getDouble("quantity_required"),
+                        UnitTypeEnum.valueOf(rs.getString("unit_type"))
+                ));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des DishIngredients : " + e.getMessage(), e);
+        }
+        return list;
+    }
+
+    public DishIngredient saveDishIngredient(DishIngredient di) {
+        if (di == null) return null;
+        String checkSql = "SELECT COUNT(*) FROM dish_ingredient WHERE id = ?";
+        String insertSql = "INSERT INTO dish_ingredient (id_dish, id_ingredient, quantity_required, unit_type) VALUES (?, ?, ?, ?::unit_type) RETURNING id";
+        String updateSql = "UPDATE dish_ingredient SET id_dish = ?, id_ingredient = ?, quantity_required = ?, unit_type = ?::unit_type WHERE id = ?";
+        try (Connection conn = dbConnection.getConnection()) {
+            int id = di.getId();
+            boolean exists = false;
+            if (id > 0) {
+                try (PreparedStatement check = conn.prepareStatement(checkSql)) {
+                    check.setInt(1, id);
+                    ResultSet rs = check.executeQuery();
+                    if (rs.next() && rs.getInt(1) > 0) exists = true;
+                }
+            }
+            if (!exists) {
+                try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
+                    stmt.setInt(1, di.getDishId());
+                    stmt.setInt(2, di.getIngredientId());
+                    stmt.setDouble(3, di.getQuantityRequired());
+                    stmt.setString(4, di.getUnitType().name());
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        id = rs.getInt(1);
+                    }
+                }
+            } else {
+                try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
+                    stmt.setInt(1, di.getDishId());
+                    stmt.setInt(2, di.getIngredientId());
+                    stmt.setDouble(3, di.getQuantityRequired());
+                    stmt.setString(4, di.getUnitType().name());
+                    stmt.setInt(5, id);
+                    stmt.executeUpdate();
+                }
+            }
+            return findDishIngredientById(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la sauvegarde du DishIngredient : " + e.getMessage(), e);
+        }
+    }
 }
