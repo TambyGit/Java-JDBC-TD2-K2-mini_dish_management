@@ -10,6 +10,28 @@ import java.util.List;
 public class DataRetriever {
     private final DBConnection dbConnection = new DBConnection();
 
+    public List<Dish> findAllDishes() {
+        String sql = "SELECT id, name, dish_type, price FROM dish ORDER BY id";
+        List<Dish> dishes = new ArrayList<>();
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int dishId = rs.getInt("id");
+                String name = rs.getString("name");
+                DishTypeEnum type = DishTypeEnum.valueOf(rs.getString("dish_type"));
+                Double price = rs.getObject("price") != null ? rs.getDouble("price") : null;
+
+                List<Ingredient> ingredients = loadIngredientsForDish(dishId, conn); // Méthode privée déjà existante
+                dishes.add(new Dish(dishId, name, type, price, ingredients));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des plats : " + e.getMessage(), e);
+        }
+        return dishes;
+    }
+
     public Dish findDishById(Integer id) {
         if (id == null || id <= 0) {
             throw new RuntimeException("ID de plat invalide : " + id);
