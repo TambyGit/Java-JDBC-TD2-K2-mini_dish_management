@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/src/main/Requete SQL/Order.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/Requete SQL/Shema.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/Requete SQL/Stock_data.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/Requete SQL/Stock_shema.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/Requete SQL/Update.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/Requete SQL/data.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/Requete SQL/db.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/Requete SQL/new_shema.sql" dialect="GenericSQL" />

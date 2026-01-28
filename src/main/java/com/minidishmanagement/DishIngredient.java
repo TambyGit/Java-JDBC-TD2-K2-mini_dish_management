@@ -1,48 +1,69 @@
 package com.minidishmanagement;
 
 public class DishIngredient {
-    private final int id;
-    private final int dishId;
-    private final int ingredientId;
-    private final double quantityRequired;
-    private final UnitTypeEnum unitType;
+    private Integer id;
+    private Dish dish;
+    private Ingredient ingredient;
+    private Double quantityRequired;
+    private UnitTypeEnum unit;
 
-    public DishIngredient(int id, int dishId, int ingredientId, double quantityRequired, UnitTypeEnum unitType) {
+    public DishIngredient(Integer id, Ingredient ingredient,Double quantityRequired, UnitTypeEnum unit) {
         this.id = id;
-        this.dishId = dishId;
-        this.ingredientId = ingredientId;
+        this.ingredient = ingredient;
         this.quantityRequired = quantityRequired;
-        this.unitType = unitType;
+        this.unit = unit;
     }
 
-    public int getId() {
+    public DishIngredient() {
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public int getDishId() {
-        return dishId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public int getIngredientId() {
-        return ingredientId;
+    public Dish getDish() {
+        return dish;
     }
 
-    public double getQuantityRequired() {
+    public void setDish(Dish dish) {
+        this.dish = dish;
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        this.ingredient = ingredient;
+    }
+
+    public Double getQuantityRequired() {
         return quantityRequired;
     }
 
-    public UnitTypeEnum getUnitType() {
-        return unitType;
+    public void setQuantityRequired(Double quantityRequired) {
+        this.quantityRequired = quantityRequired;
+    }
+
+    public UnitTypeEnum getUnit() {
+        return unit;
+    }
+
+    public void setUnit(UnitTypeEnum unit) {
+        this.unit = unit;
     }
 
     @Override
     public String toString() {
         return "DishIngredient{" +
                 "id=" + id +
-                ", dishId=" + dishId +
-                ", ingredientId=" + ingredientId +
+                ", ingredient=" + ingredient.getName()  +
                 ", quantityRequired=" + quantityRequired +
-                ", unitType=" + unitType +
+                ", unit=" + unit +
                 '}';
     }
 }

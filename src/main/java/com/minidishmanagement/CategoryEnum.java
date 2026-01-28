@@ -1,5 +1,5 @@
 package com.minidishmanagement;
 
-public enum CategorieEnum {
+public enum CategoryEnum {
     VEGETABLE,ANIMAL,MARINE,DAIRY,OTHER
 }

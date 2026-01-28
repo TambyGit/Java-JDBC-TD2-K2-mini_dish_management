@@ -4,12 +4,22 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class DBConnection {
-    private final String url = "jdbc:postgresql://localhost:5432/mini_dish_db";
-    private final String user = "mini_dish_db_manager";
-    private final String password = "123456";
+
+    Dotenv dotenv = Dotenv.load();
+    private final String URL = dotenv.get("DB_URL");
+    private final String USER = dotenv.get("DB_USER");
+    private final String PASSWORD = dotenv.get("DB_PASSWORD");
+
+    public DBConnection() {
+    }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        if (URL == null || USER == null || PASSWORD == null) {
+            throw new IllegalArgumentException("Url, Username and password are mandatory");
+        }
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }

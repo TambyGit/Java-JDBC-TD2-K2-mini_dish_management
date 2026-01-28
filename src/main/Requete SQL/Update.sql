@@ -1,0 +1,1 @@
+alter table dish rename price to selling_price;

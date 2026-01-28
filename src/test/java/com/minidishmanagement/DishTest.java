@@ -18,8 +18,8 @@ class DishTest {
     @DisplayName("Test getDishCost - Calcul du coût des ingrédients")
     void testGetDishCost() {
         List<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient(1, "Tomate", 600.0, CategorieEnum.VEGETABLE, null));
-        ingredients.add(new Ingredient(2, "Laitue", 800.0, CategorieEnum.VEGETABLE, null));
+        ingredients.add(new Ingredient(1, "Tomate", 600.0, CategoryEnum.VEGETABLE, null));
+        ingredients.add(new Ingredient(2, "Laitue", 800.0, CategoryEnum.VEGETABLE, null));
 
         Dish dish = new Dish(1, "Salade", DishTypeEnum.START, 2000.0, ingredients);
 
@@ -43,7 +43,7 @@ class DishTest {
     @DisplayName("Test getGrossMargin - Calcul correct avec prix défini")
     void testGetGrossMargin() {
         List<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient(1, "Ingrédient", 500.0, CategorieEnum.VEGETABLE, null));
+        ingredients.add(new Ingredient(1, "Ingrédient", 500.0, CategoryEnum.VEGETABLE, null));
 
         Dish dish = new Dish(1, "Plat", DishTypeEnum.MAIN, 2000.0, ingredients);
 
@@ -57,7 +57,7 @@ class DishTest {
     @DisplayName("Test getGrossMargin - Marge négative (prix < coût)")
     void testGetGrossMarginNegative() {
         List<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient(1, "Ingrédient cher", 5000.0, CategorieEnum.VEGETABLE, null));
+        ingredients.add(new Ingredient(1, "Ingrédient cher", 5000.0, CategoryEnum.VEGETABLE, null));
 
         Dish dish = new Dish(1, "Plat", DishTypeEnum.MAIN, 2000.0, ingredients);
 
@@ -72,7 +72,7 @@ class DishTest {
     @DisplayName("Test getGrossMargin - Exception quand prix est null")
     void testGetGrossMarginWithNullPrice() {
         List<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient(1, "Ingrédient", 500.0, CategorieEnum.VEGETABLE, null));
+        ingredients.add(new Ingredient(1, "Ingrédient", 500.0, CategoryEnum.VEGETABLE, null));
 
         Dish dish = new Dish(1, "Plat", DishTypeEnum.MAIN, null, ingredients);
 
@@ -92,7 +92,7 @@ class DishTest {
     @DisplayName("Test constructeur - Création avec tous les paramètres")
     void testConstructorWithAllParams() {
         List<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient(1, "Test", 100.0, CategorieEnum.VEGETABLE, null));
+        ingredients.add(new Ingredient(1, "Test", 100.0, CategoryEnum.VEGETABLE, null));
 
         Dish dish = new Dish(1, "Nom", DishTypeEnum.DESSERT, 500.0, ingredients);
 
@@ -131,7 +131,7 @@ class DishTest {
     @DisplayName("Test getGrossMargin - Prix exactement égal au coût")
     void testGetGrossMarginZero() {
         List<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient(1, "Ingrédient", 1000.0, CategorieEnum.VEGETABLE, null));
+        ingredients.add(new Ingredient(1, "Ingrédient", 1000.0, CategoryEnum.VEGETABLE, null));
         Dish dish = new Dish(1, "Plat", DishTypeEnum.MAIN, 1000.0, ingredients);
         double margin = dish.getGrossMargin();
         assertEquals(0.0, margin, 0.01, "La marge devrait être 0 quand prix = coût");

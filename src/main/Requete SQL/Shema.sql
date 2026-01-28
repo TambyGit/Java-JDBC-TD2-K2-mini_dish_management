@@ -5,7 +5,7 @@ CREATE TYPE dish_type_enum AS ENUM ('START', 'MAIN', 'DESSERT');
 CREATE TABLE dish (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
-    dish_type dish_type_enum NOT NUL;
+    dish_type dish_type_enum NOT NUL
 );
 
 CREATE TABLE ingredient (
