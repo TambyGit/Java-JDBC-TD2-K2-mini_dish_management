@@ -18,3 +18,8 @@ UPDATE dish SET price = 12000.00 WHERE id = 2;
 UPDATE dish SET price = NULL     WHERE id = 3;
 UPDATE dish SET price = 8000.00  WHERE id = 4;
 UPDATE dish SET price = NULL     WHERE id = 5;
+
+CREATE TABLE IF NOT EXISTS "table" (
+                                       id SERIAL PRIMARY KEY,
+                                       number INTEGER NOT NULL UNIQUE,
+    );

@@ -8,16 +8,21 @@ public class Order {
     private String reference;
     private Instant creationDateTime;
     private List<DishOrder> dishOrders;
+    private TableOrder tableOrder;
 
-    public Order(Integer id, String reference, Instant creationDateTime, List<DishOrder> dishOrders) {
+    public Order(Integer id, String reference, Instant creationDateTime, List<DishOrder> dishOrders, TableOrder tableOrder) {
         this.id = id;
         this.reference = reference;
         this.creationDateTime = creationDateTime;
         this.dishOrders = dishOrders;
+        this.tableOrder = tableOrder;
     }
 
     public Order() {
 
+    }
+
+    public Order(int id, String reference, Instant creationDatetime, List<DishOrder> dishOrders) {
     }
 
     public Integer getId() {
@@ -52,6 +57,14 @@ public class Order {
         this.dishOrders = dishOrders;
     }
 
+    public TableOrder getTableOrder() {
+        return tableOrder;
+    }
+
+    public void setTableOrder(TableOrder tableOrder) {
+        this.tableOrder = tableOrder;
+    }
+
     public Double getTotalAmountWithoutVAT() {
         if (dishOrders == null) return 0.0;
         return dishOrders.stream()
@@ -61,4 +74,6 @@ public class Order {
     public Double getTotalAmountWithVAT(){
         return getTotalAmountWithoutVAT()*1.2;
     }
+
+    
 }
