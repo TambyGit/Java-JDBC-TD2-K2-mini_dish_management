@@ -139,11 +139,9 @@ public class DataRetriever {
                 } else {
                     ps.setNull(3, Types.DOUBLE);
                 }
+
             }
-
-            // Sauvegarde des ingrédients du plat (sans toucher au stock ici)
             saveDishIngredientsInTransaction(dish, conn);
-
             conn.commit();
 
             System.out.println("Plat sauvegardé avec succès → id = " + dish.getId());
@@ -429,11 +427,17 @@ public class DataRetriever {
                     }
 
                     for (DishIngredient di : doItem.getDish().getIngredients()) {
-                        double qtyUsed = di.getQuantityRequired() * qty;
+                        UnitTypeEnum unitUsed = di.getUnit();
+                        double qtyInRecipeUnit = di.getQuantityRequired() * qty;
 
+                        double qtyInKg = UnitConversion.convertToKg(
+                                di.getIngredient().getName(),
+                                qtyInRecipeUnit,
+                                unitUsed
+                        );
                         psStock.setInt(1, di.getIngredient().getId());
-                        psStock.setDouble(2, qtyUsed);
-                        psStock.setString(3, di.getUnit().name());
+                        psStock.setDouble(2, qtyInKg);
+                        psStock.setString(3, "KG");
                         psStock.setObject(4, orderToSave.getCreationDateTime(), Types.TIMESTAMP);
                         psStock.addBatch();
                     }
@@ -531,12 +535,13 @@ public class DataRetriever {
         if (ingredientId == null) return null;
 
         String sql = """
-        SELECT initial_quantity, initial_unit
+        SELECT initial_quantity, initial_unit, name
         FROM ingredient
         WHERE id = ?
         """;
 
         StockValue initial = null;
+        String ingredientName = null;
         List<StockMovement> movements = new ArrayList<>();
 
         try (Connection conn = dbConnection.getConnection();
@@ -545,12 +550,17 @@ public class DataRetriever {
             psInit.setInt(1, ingredientId);
             try (ResultSet rs = psInit.executeQuery()) {
                 if (rs.next()) {
+                    ingredientName = rs.getString("name");
                     double qty = rs.getDouble("initial_quantity");
                     if (!rs.wasNull()) {
                         String unitStr = rs.getString("initial_unit");
                         initial = new StockValue(qty, UnitTypeEnum.valueOf(unitStr));
                     }
                 }
+            }
+
+            if (ingredientName == null) {
+                throw new IllegalStateException("Ingrédient non trouvé avec id=" + ingredientId);
             }
 
             String movSql = """
@@ -577,25 +587,29 @@ public class DataRetriever {
                 }
             }
 
-            double total = (initial != null) ? initial.getQuantity() : 0.0;
-            UnitTypeEnum unit = (initial != null) ? initial.getUnit() : null;
+            double totalKg = (initial != null) ? initial.getQuantity() : 0.0;
+            UnitTypeEnum baseUnit = (initial != null) ? initial.getUnit() : UnitTypeEnum.KG;
 
             for (StockMovement m : movements) {
-                if (unit == null) {
-                    unit = m.getValue().getUnit();
-                } else if (unit != m.getValue().getUnit()) {
-                    throw new IllegalStateException("Incohérence d'unité pour ingrédient id=" + ingredientId);
+                double qtyInKg;
+
+                if (m.getValue().getUnit() == UnitTypeEnum.KG) {
+                    qtyInKg = m.getValue().getQuantity();
+                } else {
+                    qtyInKg = UnitConversion.convertToKg(
+                            ingredientName,
+                            m.getValue().getQuantity(),
+                            m.getValue().getUnit()
+                    );
                 }
-                total += (m.getType() == MovementTypeEnum.IN) ? m.getValue().getQuantity() : -m.getValue().getQuantity();
+                totalKg += (m.getType() == MovementTypeEnum.OUT) ? -qtyInKg : qtyInKg;
             }
 
-            if (unit == null) {
-                throw new IllegalStateException("Aucun stock initial ni mouvement pour l'ingrédient id=" + ingredientId);
-            }
-            return new StockValue(total, unit);
+            return new StockValue(totalKg, baseUnit);
 
         } catch (SQLException | IllegalArgumentException e) {
             System.err.println("Erreur lecture stock ingrédient " + ingredientId + " : " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
